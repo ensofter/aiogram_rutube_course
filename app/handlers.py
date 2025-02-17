@@ -1,6 +1,6 @@
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 import app.keyboards as kb
 
 
@@ -13,6 +13,17 @@ async def cmd_start_command(message: Message):
                         reply_markup=kb.main)
 
 
+@router.message(Command('hi'))
+async def cmd_hi(message: Message):
+    await message.reply('Some message to me', reply_markup=kb.inline_hi)
+
+
+@router.callback_query(F.data == 'catalog')
+async def catalog(callback: CallbackQuery):
+    await callback.answer('Вы выбрали каталог')
+    await callback.message.edit_text('Это каталог', reply_markup=await kb.inline_cars())
+
+
 @router.message(Command('help'))
 async def get_help(message: Message):
     await message.answer('Это команда /help', reply_markup=kb.settings)
@@ -20,7 +31,7 @@ async def get_help(message: Message):
 
 @router.message(F.text == 'Как дела?')
 async def how_are_you(message: Message):
-    await message.answer('Ok!')
+    await message.answer('Ok!', reply_markup=await kb.inline_cars())
 
 
 @router.message(F.photo)
