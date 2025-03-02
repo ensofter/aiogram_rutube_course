@@ -1,10 +1,26 @@
-from aiogram import Bot, Dispatcher, F, Router
+from aiogram import F, Router
 from aiogram.filters import CommandStart, Command
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery
+
 import app.keyboards as kb
 
 
+from app.middlewares import TestMiddleWare
+
 router = Router()
+
+# внутренний мидлвари, работает только когда сообщение ловится фильтром (хэндлером)
+router.message.middleware(TestMiddleWare())
+
+#внешний мидлвари, отрабатывает ВСЕГДА
+#router.message.outer_middleware(TestMiddleWare())
+
+
+class Reg(StatesGroup):
+    name = State()
+    number = State()
 
 
 @router.message(CommandStart())
@@ -41,5 +57,28 @@ async def get_photo(message: Message):
 
 @router.message(Command('get_photo'))
 async def get_photo(message: Message):
-    await message.answer_photo(photo='AgACAgIAAxkBAAIGI2euWEjmH1j43wliiAOCVRrQXYahAAL-9DEbGr9xSdBym0U0sAMXAQADAgADeQADNgQ',
-                               caption='This is your photo')
+    await message.answer_photo(
+        photo='AgACAgIAAxkBAAIGI2euWEjmH1j43wliiAOCVRrQXYahAAL-9DEbGr9xSdBym0U0sAMXAQADAgADeQADNgQ',
+        caption='This is your photo')
+
+
+@router.message(Command(commands=['reg']))
+async def reg_get_name(message: Message, state: FSMContext):
+    await state.set_state(Reg.name)
+    await message.answer('Введите ваше имя')
+
+
+@router.message(Reg.name)
+async def reg_set_name_and_get_number(message: Message, state: FSMContext):
+    await state.update_data(name=message.text)
+    await state.set_state(Reg.number)
+    await message.answer('Введите номер телефона')
+
+
+@router.message(Reg.number)
+async def reg_set_number(message: Message, state: FSMContext):
+    await state.update_data(number=message.text)
+    data = await state.get_data()
+    await message.answer('Спасибо за регистрацию')
+    await message.answer(f'Ваше имя {data["name"]} и ваш номер {data["number"]}')
+    await state.clear()
