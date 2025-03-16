@@ -6,6 +6,7 @@ from environs import Env
 
 from handlers import handler
 
+
 env = Env()
 env.read_env()
 
