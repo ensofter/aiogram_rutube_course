@@ -1,13 +1,14 @@
 import logging
-from aiogram import Router
-from filters.middleware_filteers import MyTrueFilter
+
+from aiogram import Router, F
 from aiogram.filters import CommandStart
-from aiogram.types import Message, CallbackQuery
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message, CallbackQuery
+
+from filters.middleware_filteers import MyTrueFilter, MyFalseFilter
 from lexicon.middleware_lexicon import LEXICON_RU
+
 logger = logging.getLogger(__name__)
-
-
 
 router = Router()
 
@@ -21,7 +22,7 @@ async def handle_cmd_start(message: Message):
         callback_data='button_pressed'
     )
     markup = InlineKeyboardMarkup(inline_keyboard=[[button]])
-    await message.answer(text=LEXICON_RU['/start'])
+    await message.answer(text=LEXICON_RU['/start'], reply_markup=markup)
     logger.debug('Выходим из хэндлера, обрабатывающего команду /start')
 
 
@@ -32,7 +33,7 @@ async def handle_clbck_button_pressed(callback: CallbackQuery):
     logger.debug('Выходим из хэндлера, обрабатывающего нажатие на инлайн-кнопку')
 
 
-@router.message(F.text, MyTrueFilter())
+@router.message(F.text, MyFalseFilter())
 async def handle_every_message(message: Message):
     logger.debug('Вошли в хэндлер, обрабатывающий любой текст')
     logger.debug('Выходим из хэндлера, обрабатывающего лоюбой текст')

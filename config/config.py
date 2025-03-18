@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from environs import Env
 
 
@@ -9,7 +10,7 @@ class TgBot:
 
 @dataclass
 class Config:
-    tg_bot: TgBot= None
+    tg_bot: TgBot = None
 
 
 def load_config():

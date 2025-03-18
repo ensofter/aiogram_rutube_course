@@ -1,14 +1,14 @@
 import logging
+
 from aiogram import Router
+from aiogram.types import Message
+
 from filters.middleware_filteers import MyTrueFilter
 from lexicon.middleware_lexicon import LEXICON_RU
 
-from aiogram.types import Message
 logger = logging.getLogger(__name__)
 
-
 router = Router()
-
 
 
 @router.message(MyTrueFilter())
