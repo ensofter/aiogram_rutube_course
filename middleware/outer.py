@@ -20,6 +20,16 @@ class FirstOuterMiddleware(BaseMiddleware):
         logger.debug(
             f'Вошли в миддлвари {__class__.__name__}, тип события {event.__class__.__name__}',
         )
+        logger.debug(
+            f'!!! Это handler: {handler}'
+        )
+        logger.debug(
+            f'!!! это event: {event.model_dump_json(indent=4, exclude_none=True)}'
+        )
+
+        logger.debug(
+            f'!!! это data: {data}'
+        )
 
         result = await handler(event, data)
 
