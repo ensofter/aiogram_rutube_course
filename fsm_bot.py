@@ -187,7 +187,6 @@ async def main():
             text=LEXICON_RU['warning_not_news']
         )
 
-
     @dp.message(Command(commands='showdata'), StateFilter(default_state))
     async def handle_cmd_showdata(message: Message, session: AsyncSession):
         user = await orm_get_user(session, message.from_user.id)
@@ -205,7 +204,6 @@ async def main():
             await message.answer(
                 text=LEXICON_RU['no_profile']
             )
-
 
     @dp.message(StateFilter(default_state))
     async def handle_every_message(message: Message):
