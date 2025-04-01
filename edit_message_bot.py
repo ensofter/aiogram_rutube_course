@@ -57,14 +57,19 @@ async def main():
     @dp.callback_query(F.data == 'more_jokes')
     async def handle_more_button(callback: CallbackQuery):
         # await callback.message.delete()
-        await callback.message.edit_text(
-            text=jokes[random_joke_number()],
-            reply_markup=more_markup
-        )
+        random_joke = jokes[random_joke_number()]
+        if callback.message.text == random_joke:
+            await callback.answer()
+        else:
+            await callback.message.edit_text(
+                text=random_joke,
+                reply_markup=more_markup
+            )
 
 
     @dp.message()
     async def handle_every_message(message: Message):
+        logger.debug(f'!!! {message.model_dump_json(indent=4, exclude_none=True)}')
         await message.answer(text='what the fuck?')
 
     await dp.start_polling(bot)
